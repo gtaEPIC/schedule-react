@@ -1,0 +1,12 @@
+table, th, td {
+    text-align: center;
+    border: 1px solid #3f4554;
+}
+
+td.occupied {
+    background: red;
+}
+
+div.title {
+    text-align: center;
+}
