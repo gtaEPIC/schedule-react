@@ -1,0 +1,69 @@
+table, th, td {
+    text-align: center;
+    border: 1px solid #3f4554;
+    /* center the table on the screen */
+    margin-left: auto;
+    margin-right: auto;
+    /* make the table as wide as the screen */
+
+    /* collapse the borders */
+    /* make the table as wide as the screen */
+
+}
+
+td.occupied {
+    background: red;
+}
+
+div.top {
+    /* Align the text to the top center of the screen */
+    text-align: center;
+    font-size: xx-large;
+    padding-bottom: 2em;
+}
+
+div.title {
+    text-align: center;
+
+}
+
+div.liveTime {
+    font-size: xx-large;
+    text-align: center;
+}
+
+button.AddEvent {
+    /* Rounded green button */
+    background-color: transparent;
+    border-radius: 5px;
+    border: 2px solid #4CAF50;
+    color: white;
+    padding: 15px 32px;
+    width: 100%;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 0 2px 16px 2px;
+    cursor: pointer;
+    /* fade in the button */
+    transition: all 0.5s ease-in-out;
+    -webkit-transition: all 0.5s ease-in-out; /* Safari */
+}
+
+button.AddEvent:hover {
+    /* Rounded green button */
+    background-color: #4CAF50;
+    border-radius: 5px;
+    color: white;
+    padding: 15px 32px;
+    width: 100%;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 0 2px 16px 2px;
+    cursor: pointer;
+    transition: all 0.5s ease-in-out;
+    -webkit-transition: all 0.5s ease-in-out; /* Safari */
+}

@@ -1,17 +1,38 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, SetStateAction, Dispatch} from "react";
 
 import Table from 'react-bootstrap/Table';
 
-import "./schedule.css";
-import Event from './Event'
-import useAudio, {Props} from "./UseAudio";
-import LiveTime from "./LiveTime";
+import "./CSS/schedule.css";
+import Event, {EditEventData, NewEventCard} from './Event';
+import useAudio from "./UseAudio";
+import LiveTime from "./Live/LiveTime";
+import EventRows from "./EventRows";
+import {io, Socket} from "socket.io-client";
+import LiveDate from "./Live/LiveDate";
+import NextEvent from "./NextEvent";
+import {setInterval} from "timers";
+
+export interface Sounds {
+    music1: React.Dispatch<React.SetStateAction<boolean>>,
+    music2: React.Dispatch<React.SetStateAction<boolean>>,
+    pAlert: React.Dispatch<React.SetStateAction<boolean>>,
+    pBack: React.Dispatch<React.SetStateAction<boolean>>,
+    pDeselect: React.Dispatch<React.SetStateAction<boolean>>,
+    pEnter: React.Dispatch<React.SetStateAction<boolean>>,
+    pListing: React.Dispatch<React.SetStateAction<boolean>>,
+    pSelect: React.Dispatch<React.SetStateAction<boolean>>,
+    pSuccess: React.Dispatch<React.SetStateAction<boolean>>,
+
+}
 
 function Schedule() {
     let [started, setStarted] = useState(false);
     const domain = window.location.hostname;
-    const [isPlaying, setPlaying] = useAudio("http://" + domain + ":8080/sounds/Music.mp3", () => {
-        setPlaying(true)
+    const [music1, setMusic1] = useAudio("http://" + domain + ":8080/sounds/Music.mp3", () => {
+        setMusic2(true);
+    });
+    const [music2, setMusic2] = useAudio("http://" + domain + ":8080/sounds/Music2.mp3", () => {
+        setMusic1(true);
     });
     const [isPAlert, setPAlert] = useAudio("http://" + domain + ":8080/sounds/Alert.mp3", () => {});
     const [isPBack, setPBack] = useAudio("http://" + domain + ":8080/sounds/Back.mp3", () => {});
@@ -20,42 +41,78 @@ function Schedule() {
     const [isPListing, setPListing] = useAudio("http://" + domain + ":8080/sounds/Listing.mp3", () => {});
     const [isPSelect, setPSelect] = useAudio("http://" + domain + ":8080/sounds/Select.mp3", () => {});
     const [isPSuccess, setPSuccess] = useAudio("http://" + domain + ":8080/sounds/Success.mp3", () => {});
+    const [events, setEvents]: [Event[] | undefined, Dispatch<SetStateAction<Event[] | undefined>>] = useState();
+    const [socket, setSocket] = useState<Socket>(io("ws://" + domain + ":8080"));
+    const [showingAlert, setShowingAlert] = useState(false);
+
+    const listOfSounds: Sounds = {
+        music1: setMusic1,
+        music2: setMusic2,
+        pAlert: setPAlert,
+        pBack: setPBack,
+        pDeselect: setPDeselect,
+        pEnter: setPEnter,
+        pListing: setPListing,
+        pSelect: setPSelect,
+        pSuccess: setPSuccess
+    }
+
+    const handleList = (data: Event[]) => {
+        console.log(data);
+        setEvents(data);
+        setPListing(true);
+    };
 
 
     if (!started) {
         setStarted(true);
-        const ws = new WebSocket("ws://" + domain + ":8080");
 
         document.addEventListener("click", () => {
-            if (!isPlaying)
-                setPlaying(true);
+            if (!music1 && !music2)
+                setMusic1(true);
         });
 
         console.log("Hello!")
 
-        let listOfEvents: Array<Event> = [];
-
-        ws.addEventListener("close", () => {
+        socket.on("disconnect", () => {
             setPAlert(true);
-            alert("Disconnected from server!")
-        })
+            setShowingAlert(true);
+            //alert("Disconnected from server!")
+        });
 
-        ws.addEventListener("open", () => {
+        socket.on("connect", () => {
+            console.log("Connected to server!")
             setPSelect(true)
-            console.log(isPSelect);
-            ws.send(JSON.stringify({
-                type: "list"
-            }))
-        })
-        ws.addEventListener("message", data => {
-            //console.log(JSON.parse(data.data))
-            setPListing(true);
-            listOfEvents = JSON.parse(data.data).events;
-            console.log(listOfEvents);
-        })
+            setShowingAlert(false);
+            socket.emit("list", handleList);
+        });
+
+        socket.on("list", handleList);
+
+        socket.on("close", (err: any) => {
+            console.log(err);
+            setPAlert(true);
+            setShowingAlert(true);
+        });
+
+        socket.on("connect_error", (err: any) => {
+            console.log(err);
+            setPAlert(true);
+            setShowingAlert(true);
+        });
+
+        setInterval(() => {
+            if (!events) return;
+            for (let event of events) {
+
+            }
+        }, 1000);
 
     }
 
+    const [adding, setAdding] = useState(false);
+
+    /*
     const show: boolean = false;
     const setShow: any = null;
     const getStuff = (aShow: boolean, aSetShow: any) => {
@@ -64,21 +121,47 @@ function Schedule() {
 
     }
 
+     */
+
     return(
         <div>
+            <div className="Card-alert" hidden={!showingAlert}>
+                <div className="Card-no-events">
+                    <p>Disconnected from server!</p>
+                </div>
+            </div>
+            <div className="top">
+                <h1>Schedule</h1>
+                <h2>Time now:</h2>
+                <div className="liveTime">
+                    <LiveDate/> | <LiveTime/>
+                </div>
+            </div>
+            <div className="top">
+                <h2>Next Event:</h2>
+                <NextEvent events={events} socket={socket} sounds={listOfSounds} />
+            </div>
+            <div className="AddEvent" hidden={adding}>
+                <button className="AddEvent" onClick={() => {
+                    setPEnter(true);
+                    setAdding(true);
+                }}>Create New Event</button>
+            </div>
+            <div className="AddEvent" hidden={!adding}>
+                <NewEventCard setAdding={setAdding} socket={socket} sounds={listOfSounds} />
+            </div>
             <div className="title">Upcoming Events:</div>
             <Table>
                 <thead>
                     <tr>
+                        <th><LiveDate /></th>
                         <th><LiveTime /></th>
+                        <th>End Time</th>
                         <th>Event Name</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Test</td>
-                        <td className="occupied">Test1</td>
-                    </tr>
+                    <EventRows events={events}/>
                 </tbody>
             </Table>
         </div>

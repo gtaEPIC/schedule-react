@@ -1,0 +1,134 @@
+div.Card {
+  border-radius: 5px;
+  padding: 10px;
+  background-color: #131516;
+  margin: 30px;
+  align-content: center;
+  max-width: fit-content;
+}
+div.Card-Full {
+  border-radius: 5px;
+  padding: 10px;
+  background-color: #131516;
+  margin: 30px;
+  align-content: center;
+}
+div.Card-NOW {
+  background-color: #8d2323;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 5px;
+  align-content: center;
+  max-width: fit-content;
+}
+
+div.Card-alert {
+  background-color: #ad573a;
+  padding: 15px;
+  margin: 15px;
+  border-radius: 5px;
+}
+
+div.Card-no-events {
+  font-size: 0.8em;
+  padding: 5px;
+  margin: 10px;
+  width: 100%;
+}
+
+div.Card-content {
+  padding: 5px;
+  margin: 10px;
+  width: 90%;
+}
+div.Card-times {
+  padding: 5px;
+  margin: 10px;
+  text-align: left;
+  float: left;
+}
+div.Card-title {
+  padding: 5px;
+  margin: 10px;
+  text-align: right;
+}
+
+div.Card-footer {
+  padding: 5px;
+  margin: 10px;
+  text-align: left;
+  font-size: small;
+}
+
+div.Buttons {
+  padding: 5px;
+  text-align: right;
+  float: right;
+  border: 3px solid red;
+  border-radius: 10px;
+}
+button.Actions {
+  background-color: #8d2323;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 10px;
+  size: 32px;
+  text-align: center;
+  float: right;
+}
+img.Icon {
+  width: 32px;
+  height: 32px;
+  margin: 5px;
+}
+
+/* New Events */
+h5.Card-title {
+  padding: 5px;
+  margin: 10px;
+  text-align: center;
+}
+textarea {
+  width: 90%;
+  height: 90%;
+  resize: none;
+}
+
+button.Cancel {
+  background-color: transparent;
+  color: #ffffff;
+  border-radius: 5px;
+  border: 1px solid #ff0000;
+  padding: 5px 1px 5px 10px;
+  margin: 10px;
+  text-align: center;
+  width: 45%;
+}
+button.Cancel:hover {
+  background-color: #ff0000;
+  color: #ffffff;
+  border-radius: 5px;
+  padding: 5px 1px 5px 10px;
+  margin: 10px;
+  text-align: center;
+  width: 45%;
+}
+button.Save:hover {
+  background-color: #00a800;
+  color: #ffffff;
+  border-radius: 5px;
+  padding: 5px 1px 5px 1px;
+  margin: 10px;
+  text-align: center;
+  width: 45%;
+}
+button.Save {
+  background-color: transparent;
+  color: #ffffff;
+  border-radius: 5px;
+  border: 1px solid #00a800;
+  padding: 5px 10px 5px 1px;
+  margin: 10px;
+  text-align: center;
+  width: 45%;
+}

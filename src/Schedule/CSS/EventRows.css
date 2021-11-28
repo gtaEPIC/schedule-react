@@ -1,0 +1,7 @@
+@import "../../Roboto.css";
+
+td.no-events {
+    background-color: #c25151;
+    text-align: center;
+    font-family: Roboto;
+}
