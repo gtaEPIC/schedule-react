@@ -48,7 +48,7 @@ var SQLEvents = /** @class */ (function () {
             var db, result;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, (0, sqlite_1.open)({
+                    case 0: return [4 /*yield*/, sqlite_1.open({
                             filename: 'schedule.db',
                             driver: sqlite3.Database
                         })];
@@ -69,7 +69,7 @@ var SQLEvents = /** @class */ (function () {
             var db, result;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, (0, sqlite_1.open)({
+                    case 0: return [4 /*yield*/, sqlite_1.open({
                             filename: 'schedule.db',
                             driver: sqlite3.Database
                         })];
@@ -88,7 +88,7 @@ var SQLEvents = /** @class */ (function () {
             var db, name;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, (0, sqlite_1.open)({
+                    case 0: return [4 /*yield*/, sqlite_1.open({
                             filename: 'schedule.db',
                             driver: sqlite3.Database
                         })];
@@ -116,7 +116,7 @@ var SQLEvents = /** @class */ (function () {
             var db, results, final, _i, results_1, result, event_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, (0, sqlite_1.open)({
+                    case 0: return [4 /*yield*/, sqlite_1.open({
                             filename: 'schedule.db',
                             driver: sqlite3.Database
                         })];
@@ -141,7 +141,7 @@ var SQLEvents = /** @class */ (function () {
             var db;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, (0, sqlite_1.open)({
+                    case 0: return [4 /*yield*/, sqlite_1.open({
                             filename: 'schedule.db',
                             driver: sqlite3.Database
                         })];
@@ -158,4 +158,3 @@ var SQLEvents = /** @class */ (function () {
     return SQLEvents;
 }());
 exports.SQLEvents = SQLEvents;
-//# sourceMappingURL=SQLEvents.js.map

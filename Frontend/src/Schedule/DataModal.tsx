@@ -2,7 +2,7 @@ import React, {useState} from "react";
 
 import Modal from 'react-bootstrap/Modal';
 import {Button} from "react-bootstrap";
-import Event from "./Event";
+import Event from "./Events/Event";
 
 export interface Callback {
     (event: Event): void

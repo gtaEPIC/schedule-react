@@ -1,9 +1,9 @@
 import Event, {CardEvent} from "./Event";
 import React from "react";
-import "./CSS/Cards.css";
-import "../Roboto.css";
+import "../CSS/Cards.css";
+import "../../Roboto.css";
 import {Socket} from "socket.io-client";
-import {Sounds} from "./schedule";
+import {Sounds} from "../schedule";
 
 function getNextEvent(events: Event[] | undefined): Event | undefined {
     console.log("getNextEvent", events);

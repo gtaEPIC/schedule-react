@@ -1,8 +1,8 @@
-import FormatTime from "./Formats/FormatTime";
+import FormatTime from "../Formats/FormatTime";
 import React, {useState} from "react";
-import "./CSS/Cards.css";
+import "../CSS/Cards.css";
 import {Socket} from "socket.io-client";
-import {Sounds} from "./schedule";
+import {ListOfSounds, Sounds, wsSocket} from "../schedule";
 
 class Event {
     title: string;
@@ -29,13 +29,22 @@ class Event {
 export function TableEvent({event}: {event: Event}) {
     let date: Date = new Date(event.start_time * 1000);
     let end_date: Date = new Date(event.end_time * 1000);
+    const [showCard, setShowCard] = useState(false);
     return (
-        <tr>
-            <td>{date.getFullYear()}/{date.getMonth() + 1}/{date.getDate()}</td>
-            <td><FormatTime date={date}/></td>
-            <td><FormatTime date={end_date}/></td>
-            <td>{event.title}</td>
-        </tr>
+        <>
+            <tr hidden={showCard} onClick={() => setShowCard(true)}>
+                <td>{date.getFullYear()}/{date.getMonth() + 1}/{date.getDate()}</td>
+                <td><FormatTime date={date}/></td>
+                <td><FormatTime date={end_date}/></td>
+                <td>{event.title}</td>
+            </tr>
+            <tr hidden={!showCard}>
+                <td colSpan={4}>
+                    <CardEvent event={event} socket={wsSocket} sounds={ListOfSounds}/>
+                    <button onClick={() => setShowCard(false)}>Close</button>
+                </td>
+            </tr>
+        </>
     )
 }
 
@@ -149,7 +158,7 @@ export function CardEvent({event, socket, sounds}: {event: Event, socket: Socket
             <div className={(event.start_time <= time && event.end_time > time) ? "Card-NOW" : "Card"}>
                 <div className="Card-content">
                     <div className="Card-times">
-                        <FormatTime date={startTime}/> - <FormatTime date={endTime}/>
+                        <FormatTime date={startTime} hideSeconds={true}/> - <FormatTime date={endTime} hideSeconds={true}/>
                     </div>
                     <div className="Card-title">
                         {event.title}

@@ -3,13 +3,13 @@ import React, {useState, useEffect, SetStateAction, Dispatch} from "react";
 import Table from 'react-bootstrap/Table';
 
 import "./CSS/schedule.css";
-import Event, {EditEventData, NewEventCard} from './Event';
+import Event, {EditEventData, NewEventCard} from './Events/Event';
 import useAudio from "./UseAudio";
 import LiveTime from "./Live/LiveTime";
-import EventRows from "./EventRows";
+import EventRows from "./Events/EventRows";
 import {io, Socket} from "socket.io-client";
 import LiveDate from "./Live/LiveDate";
-import NextEvent from "./NextEvent";
+import NextEvent from "./Events/NextEvent";
 import {setInterval} from "timers";
 
 export interface Sounds {
@@ -24,6 +24,9 @@ export interface Sounds {
     pSuccess: React.Dispatch<React.SetStateAction<boolean>>,
 
 }
+
+export let ListOfSounds: Sounds;
+export let wsSocket: Socket;
 
 function Schedule() {
     let [started, setStarted] = useState(false);
@@ -45,7 +48,7 @@ function Schedule() {
     const [socket, setSocket] = useState<Socket>(io("ws://" + domain + ":8080"));
     const [showingAlert, setShowingAlert] = useState(false);
 
-    const listOfSounds: Sounds = {
+    ListOfSounds = {
         music1: setMusic1,
         music2: setMusic2,
         pAlert: setPAlert,
@@ -69,10 +72,11 @@ function Schedule() {
 
         document.addEventListener("click", () => {
             if (!music1 && !music2)
-                setMusic1(true);
+                setMusic2(true);
         });
 
         console.log("Hello!")
+        wsSocket = socket;
 
         socket.on("disconnect", () => {
             setPAlert(true);
@@ -100,13 +104,6 @@ function Schedule() {
             setPAlert(true);
             setShowingAlert(true);
         });
-
-        setInterval(() => {
-            if (!events) return;
-            for (let event of events) {
-
-            }
-        }, 1000);
 
     }
 
@@ -139,7 +136,7 @@ function Schedule() {
             </div>
             <div className="top">
                 <h2>Next Event:</h2>
-                <NextEvent events={events} socket={socket} sounds={listOfSounds} />
+                <NextEvent events={events} socket={socket} sounds={ListOfSounds} />
             </div>
             <div className="AddEvent" hidden={adding}>
                 <button className="AddEvent" onClick={() => {
@@ -148,7 +145,7 @@ function Schedule() {
                 }}>Create New Event</button>
             </div>
             <div className="AddEvent" hidden={!adding}>
-                <NewEventCard setAdding={setAdding} socket={socket} sounds={listOfSounds} />
+                <NewEventCard setAdding={setAdding} socket={socket} sounds={ListOfSounds} />
             </div>
             <div className="title">Upcoming Events:</div>
             <Table>

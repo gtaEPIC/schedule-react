@@ -1,7 +1,7 @@
 import Event, {TableEvent} from "./Event";
 import React from "react";
-import "./CSS/EventRows.css";
-import "../Roboto.css";
+import "../CSS/EventRows.css";
+import "../../Roboto.css";
 
 function EventRows({events}: {events: Event[] | undefined}) {
     if (!events || events.length === 0) return(

@@ -4,7 +4,7 @@ div.Card {
   background-color: #131516;
   margin: 30px;
   align-content: center;
-  max-width: fit-content;
+  max-width: 500px;
 }
 div.Card-Full {
   border-radius: 5px;
@@ -12,14 +12,15 @@ div.Card-Full {
   background-color: #131516;
   margin: 30px;
   align-content: center;
+  max-width: 500px;
 }
 div.Card-NOW {
   background-color: #8d2323;
-  padding: 10px;
-  margin: 10px;
   border-radius: 5px;
+  padding: 10px;
+  margin: 30px;
   align-content: center;
-  max-width: fit-content;
+  max-width: 500px;
 }
 
 div.Card-alert {
