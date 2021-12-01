@@ -3,14 +3,13 @@ import React, {useState, useEffect, SetStateAction, Dispatch} from "react";
 import Table from 'react-bootstrap/Table';
 
 import "./CSS/schedule.css";
-import Event, {EditEventData, NewEventCard} from './Events/Event';
+import Event, {NewEventCard} from './Events/Event';
 import useAudio from "./UseAudio";
 import LiveTime from "./Live/LiveTime";
 import EventRows from "./Events/EventRows";
 import {io, Socket} from "socket.io-client";
 import LiveDate from "./Live/LiveDate";
 import NextEvent from "./Events/NextEvent";
-import {setInterval} from "timers";
 
 export interface Sounds {
     music1: React.Dispatch<React.SetStateAction<boolean>>,
@@ -45,7 +44,7 @@ function Schedule() {
     const [isPSelect, setPSelect] = useAudio("http://" + domain + ":8080/sounds/Select.mp3", () => {});
     const [isPSuccess, setPSuccess] = useAudio("http://" + domain + ":8080/sounds/Success.mp3", () => {});
     const [events, setEvents]: [Event[] | undefined, Dispatch<SetStateAction<Event[] | undefined>>] = useState();
-    const [socket, setSocket] = useState<Socket>(io("ws://" + domain + ":8080"));
+    const [socket] = useState<Socket>(io("ws://" + domain + ":8080"));
     const [showingAlert, setShowingAlert] = useState(false);
 
     ListOfSounds = {
