@@ -85,7 +85,7 @@ var SQLEvents = /** @class */ (function () {
     };
     SQLEvents.setEvent = function (event) {
         return __awaiter(this, void 0, void 0, function () {
-            var db, name;
+            var db;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, (0, sqlite_1.open)({
@@ -94,19 +94,17 @@ var SQLEvents = /** @class */ (function () {
                         })];
                     case 1:
                         db = _a.sent();
-                        name = event.title;
-                        return [4 /*yield*/, this.hasEvent(name)];
+                        console.log(event);
+                        if (!(event.old && event.old !== "")) return [3 /*break*/, 3];
+                        return [4 /*yield*/, db.run('UPDATE schedule SET Name = ?, Description = ?, Start_Time = ?, End_Time = ?, Location = ?, How = ? WHERE Name = ?', event.title, event.description, event.start_time, event.end_time, event.where, event.how, event.old)];
                     case 2:
-                        if (!_a.sent()) return [3 /*break*/, 4];
-                        return [4 /*yield*/, db.run('UPDATE schedule SET name = ?, description = ?, start_time = ?, end_time = ?, location = ?, how = ? WHERE name = ?', event.title, event.description, event.start_time, event.end_time, event.where, event.how)];
-                    case 3:
                         _a.sent();
-                        return [3 /*break*/, 6];
-                    case 4: return [4 /*yield*/, db.run('INSERT INTO schedule VALUES (?,?,?,?,?,?)', event.title, event.description, event.start_time, event.end_time, event.where, event.how)];
-                    case 5:
+                        return [3 /*break*/, 5];
+                    case 3: return [4 /*yield*/, db.run('INSERT OR REPLACE INTO schedule (Name, Description, Start_Time, End_Time, Location, How) VALUES (?, ?, ?, ?, ?, ?)', event.title, event.description, event.start_time, event.end_time, event.where, event.how)];
+                    case 4:
                         _a.sent();
-                        _a.label = 6;
-                    case 6: return [2 /*return*/];
+                        _a.label = 5;
+                    case 5: return [2 /*return*/];
                 }
             });
         });
@@ -158,3 +156,4 @@ var SQLEvents = /** @class */ (function () {
     return SQLEvents;
 }());
 exports.SQLEvents = SQLEvents;
+//# sourceMappingURL=SQLEvents.js.map

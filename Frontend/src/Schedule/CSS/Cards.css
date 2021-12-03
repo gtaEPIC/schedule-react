@@ -2,37 +2,38 @@ div.Card {
   border-radius: 5px;
   padding: 10px;
   background-color: #131516;
-  margin: 30px;
+  margin: 10px auto;
   align-content: center;
-  max-width: 90%;
+  max-width: 70%;
 }
 div.Card-Full {
   border-radius: 5px;
   padding: 10px;
   background-color: #131516;
-  margin: 30px;
+  margin: 10px auto;
   align-content: center;
+  max-width: 80%;
 }
 div.Card-NOW {
   background-color: #8d2323;
   border-radius: 5px;
   padding: 10px;
-  margin: 30px;
+  margin: 10px auto;
   align-content: center;
-  max-width: 90%;
+  max-width: 70%;
 }
 
 div.Card-alert {
   background-color: #ad573a;
   padding: 15px;
-  margin: 15px;
+  margin: auto;
   border-radius: 5px;
 }
 
 div.Card-no-events {
   font-size: 0.8em;
   padding: 5px;
-  margin: 10px;
+  margin: auto;
   width: 100%;
 }
 

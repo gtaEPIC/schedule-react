@@ -11,7 +11,6 @@ function EventRows({events}: {events: Event[] | undefined}) {
             </td>
         </tr>
     );
-    console.log(events)
     let rows: JSX.Element[] = [];
     for (let event of events) {
         rows.push(

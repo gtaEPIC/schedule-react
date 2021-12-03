@@ -3,13 +3,15 @@ import React, {useState, useEffect, SetStateAction, Dispatch} from "react";
 import Table from 'react-bootstrap/Table';
 
 import "./CSS/schedule.css";
-import Event, {NewEventCard} from './Events/Event';
+import Event, {EditEventData, NewEventCard} from './Events/Event';
 import useAudio from "./UseAudio";
 import LiveTime from "./Live/LiveTime";
 import EventRows from "./Events/EventRows";
 import {io, Socket} from "socket.io-client";
 import LiveDate from "./Live/LiveDate";
 import NextEvent from "./Events/NextEvent";
+import {log} from "util";
+import * as Console from "console";
 
 export interface Sounds {
     music1: React.Dispatch<React.SetStateAction<boolean>>,
@@ -25,11 +27,20 @@ export interface Sounds {
 }
 
 export let ListOfSounds: Sounds;
-export let wsSocket: Socket;
+const domain = window.location.hostname;
+export let wsSocket: Socket = io("ws://" + domain + ":8080");
+
+
+export let AddingEvent: boolean = false;
+export let newData: EditEventData | undefined;
+export function setAddingEvent(value: boolean, data?: EditEventData) {
+    console.log("setAddingEvent");
+    AddingEvent = value;
+    newData = data;
+}
 
 function Schedule() {
     let [started, setStarted] = useState(false);
-    const domain = window.location.hostname;
     const [music1, setMusic1] = useAudio("http://" + domain + ":8080/sounds/Music.mp3", () => {
         setMusic2(true);
     });
@@ -44,8 +55,8 @@ function Schedule() {
     const [isPSelect, setPSelect] = useAudio("http://" + domain + ":8080/sounds/Select.mp3", () => {});
     const [isPSuccess, setPSuccess] = useAudio("http://" + domain + ":8080/sounds/Success.mp3", () => {});
     const [events, setEvents]: [Event[] | undefined, Dispatch<SetStateAction<Event[] | undefined>>] = useState();
-    const [socket] = useState<Socket>(io("ws://" + domain + ":8080"));
     const [showingAlert, setShowingAlert] = useState(false);
+    const [editData, setEditData] = useState<EditEventData | undefined>(undefined);
 
     ListOfSounds = {
         music1: setMusic1,
@@ -67,6 +78,11 @@ function Schedule() {
 
 
     if (!started) {
+        setInterval(() => {
+            if (newData !== editData) {
+                setEditData(newData);
+            }
+        }, 100);
         setStarted(true);
 
         document.addEventListener("click", () => {
@@ -75,30 +91,29 @@ function Schedule() {
         });
 
         console.log("Hello!")
-        wsSocket = socket;
 
-        socket.on("disconnect", () => {
+        wsSocket.on("disconnect", () => {
             setPAlert(true);
             setShowingAlert(true);
             //alert("Disconnected from server!")
         });
 
-        socket.on("connect", () => {
+        wsSocket.on("connect", () => {
             console.log("Connected to server!")
             setPSelect(true)
             setShowingAlert(false);
-            socket.emit("list", handleList);
+            wsSocket.emit("list", handleList);
         });
 
-        socket.on("list", handleList);
+        wsSocket.on("list", handleList);
 
-        socket.on("close", (err: any) => {
+        wsSocket.on("close", (err: any) => {
             console.log(err);
             setPAlert(true);
             setShowingAlert(true);
         });
 
-        socket.on("connect_error", (err: any) => {
+        wsSocket.on("connect_error", (err: any) => {
             console.log(err);
             setPAlert(true);
             setShowingAlert(true);
@@ -106,7 +121,6 @@ function Schedule() {
 
     }
 
-    const [adding, setAdding] = useState(false);
 
     /*
     const show: boolean = false;
@@ -135,16 +149,32 @@ function Schedule() {
             </div>
             <div className="top">
                 <h2>Next Event:</h2>
-                <NextEvent events={events} socket={socket} sounds={ListOfSounds} />
+                <NextEvent events={events} />
             </div>
-            <div className="AddEvent" hidden={adding}>
-                <button className="AddEvent" onClick={() => {
-                    setPEnter(true);
-                    setAdding(true);
-                }}>Create New Event</button>
-            </div>
-            <div className="AddEvent" hidden={!adding}>
-                <NewEventCard setAdding={setAdding} socket={socket} sounds={ListOfSounds} />
+            <div className="top">
+                <div className="AddEvent" hidden={AddingEvent}>
+                    <button className="AddEvent" onClick={() => {
+                        setPEnter(true);
+                        setAddingEvent(true);
+                    }}>Create New Event</button>
+                </div>
+                <div className="AddEvent" hidden={!AddingEvent}>
+                    <NewEventCard data={editData} />
+                </div>
+                <div className="AddEvent">
+                    <button className="AddEvent" onClick={() => {
+                        setPEnter(true);
+                        setAddingEvent(true, {
+                            title: "Test",
+                            description: "Something Sussy",
+                            start_time: new Date(),
+                            end_time: new Date(),
+                            where: "",
+                            how: "",
+                            old: ""
+                        });
+                    }}>Demo</button>
+                </div>
             </div>
             <div className="title">Upcoming Events:</div>
             <Table>

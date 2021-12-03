@@ -1,13 +1,8 @@
-import * as https from "https";
-import * as fs from "fs";
-import * as path from "path";
 import * as express from "express";
-import * as WS from "ws";
 import {Event} from "./classes/Event";
 import {SQLEvents} from "./classes/SQLEvents";
 import * as http from "http";
 import {Server, Socket} from "socket.io";
-import {ServerOptions} from "http";
 
 const app = express()
 

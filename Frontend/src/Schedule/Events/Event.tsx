@@ -1,8 +1,8 @@
 import FormatTime from "../Formats/FormatTime";
 import React, {useState} from "react";
 import "../CSS/Cards.css";
-import {Socket} from "socket.io-client";
-import {ListOfSounds, Sounds, wsSocket} from "../schedule";
+import {AddingEvent, ListOfSounds, setAddingEvent, Sounds, wsSocket} from "../schedule";
+import FormatDate from "../Formats/FormatDate";
 
 class Event {
     title: string;
@@ -33,14 +33,14 @@ export function TableEvent({event}: {event: Event}) {
     return (
         <>
             <tr hidden={showCard} onClick={() => setShowCard(true)}>
-                <td>{date.getFullYear()}/{date.getMonth() + 1}/{date.getDate()}</td>
+                <td><FormatDate date={date}/></td>
                 <td><FormatTime date={date}/></td>
                 <td><FormatTime date={end_date}/></td>
                 <td>{event.title}</td>
             </tr>
             <tr hidden={!showCard}>
                 <td colSpan={4}>
-                    <CardEvent event={event} socket={wsSocket} sounds={ListOfSounds}/>
+                    <CardEvent event={event}/>
                     <button onClick={() => setShowCard(false)}>Close</button>
                 </td>
             </tr>
@@ -67,7 +67,7 @@ function contentCheck(content1: EditEventData, content2: EditEventData): boolean
         content1.how === content2.how
 }
 
-export function NewEventCard({setAdding, socket, sounds}: {setAdding: React.Dispatch<React.SetStateAction<boolean>>, socket: Socket, sounds: Sounds}) {
+export function NewEventCard({data}: {data?: EditEventData}) {
     const [lastData, setLastData] = useState({title: "", description: "", start_time: new Date(), end_time: new Date(), where: "", how: "", old: ""});
     let htmlTitle: HTMLInputElement = document.getElementById("title") as HTMLInputElement;
     let htmlDescription: HTMLTextAreaElement = document.getElementById("description") as HTMLTextAreaElement;
@@ -76,10 +76,25 @@ export function NewEventCard({setAdding, socket, sounds}: {setAdding: React.Disp
     let htmlWhere: HTMLInputElement = document.getElementById("where") as HTMLInputElement;
     let htmlHow: HTMLInputElement = document.getElementById("how") as HTMLInputElement;
 
+    const [old, setOld] = useState<string | undefined>(undefined);
+
+    if (data && !contentCheck(data, lastData)) {
+        console.log(data.start_time.getTime() / 1000);
+        htmlTitle.value = data.title;
+        htmlDescription.value = data.description;
+        // Subtract time by timezone offset
+        htmlStart.value = new Date(data.start_time.getTime() - data.start_time.getTimezoneOffset() * 60000).toISOString().slice(0, 19)
+        htmlEnd.value = new Date(data.end_time.getTime() - data.end_time.getTimezoneOffset() * 60000).toISOString().slice(0, 19)
+        htmlWhere.value = data.where;
+        htmlHow.value = data.how;
+        setOld(data.old);
+        setLastData(data);
+    }
+
     return (
         <div className="Card-Full">
             <div className="Card-content">
-                <h5 className="Card-title">New Event</h5>
+                <h5 className="Card-title">{(data) ? "Edit Event" : "New Event"}</h5>
                 <table>
                     <tbody>
                         <tr>
@@ -115,8 +130,8 @@ export function NewEventCard({setAdding, socket, sounds}: {setAdding: React.Disp
             </div>
             <div className="Card-footer">
                 <button className="Cancel" onClick={() => {
-                    setAdding(false);
-                    sounds.pBack(true);
+                    setAddingEvent(false);
+                    ListOfSounds.pBack(true);
                 }}>Cancel
                 </button>
                 <button className="Save" onClick={() => {
@@ -127,11 +142,11 @@ export function NewEventCard({setAdding, socket, sounds}: {setAdding: React.Disp
                     let end_time: number = new Date(htmlEnd.value).getTime() / 1000;
                     let where: string = htmlWhere.value;
                     let how: string = htmlHow.value;
-                    let old: string = "";
-                    let event: Event = new Event(title, description, start_time, end_time, where, how, old);
-                    sounds.pEnter(true);
-                    socket.emit("update", event, () => sounds.pSuccess(true));
-                    setAdding(false);
+                    let event: Event = new Event(title, description, start_time, end_time, where, how, (old) ? old : "");
+                    console.log(event, data);
+                    ListOfSounds.pEnter(true);
+                    wsSocket.emit("update", event, () => ListOfSounds.pSuccess(true));
+                    setAddingEvent(false);
                 }}>Save
                 </button>
             </div>
@@ -139,7 +154,7 @@ export function NewEventCard({setAdding, socket, sounds}: {setAdding: React.Disp
     )
 }
 
-export function CardEvent({event, socket, sounds}: {event: Event, socket: Socket, sounds: Sounds}) {
+export function CardEvent({event}: {event: Event}) {
     const domain = window.location.hostname;
     let startTime: Date = new Date(event.start_time * 1000);
     let endTime: Date = new Date(event.end_time * 1000);
@@ -168,12 +183,23 @@ export function CardEvent({event, socket, sounds}: {event: Event, socket: Socket
                 <div className="Card-footer">
                     <div className="Buttons">
                         <img src={"http://" + domain + ":8080/icons/edit.png"} alt={"Edit"} className="Icon" onClick={() => {
-                            //setEditing(event);
-                        }} hidden={true}/>
-                        <img src={"http://" + domain + ":8080/icons/delete.png"} alt={"Delete"} className="Icon" onClick={() => {
-                            sounds.pEnter(true);
-                            socket.emit("delete", event, () => sounds.pSuccess(true));
+                            setAddingEvent(true, {
+                                title: event.title,
+                                description: event.description,
+                                start_time: startTime,
+                                end_time: endTime,
+                                where: event.where,
+                                how: event.how,
+                                old: event.title
+                            });
                         }}/>
+                        <img src={"http://" + domain + ":8080/icons/delete.png"} alt={"Delete"} className="Icon" onClick={() => {
+                            ListOfSounds.pEnter(true);
+                            wsSocket.emit("delete", event, () => ListOfSounds.pSuccess(true));
+                        }}/>
+                    </div>
+                    <div className="Card-date">
+                        Date: <FormatDate date={startTime}/>
                     </div>
                     <div className="Card-where">
                         Where: {event.where}

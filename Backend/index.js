@@ -159,3 +159,4 @@ function eventCheck() {
     });
 }
 setInterval(eventCheck, 5000);
+//# sourceMappingURL=index.js.map

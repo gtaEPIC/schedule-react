@@ -2,23 +2,31 @@ table, th, td {
     text-align: center;
     border: 1px solid #3f4554;
     /* center the table on the screen */
-    margin-left: auto;
-    margin-right: auto;
+    margin: auto;
     /* make the table as wide as the screen */
 
     /* collapse the borders */
     /* make the table as wide as the screen */
+}
 
+table {
+    max-width: 100%;
 }
 
 td.occupied {
     background: red;
 }
 
+td.now {
+    background: #ad573a;
+}
+
 div.top {
     /* Align the text to the top center of the screen */
     text-align: center;
     font-size: xx-large;
+    max-width: 95%;
+    margin: auto;
 }
 
 div.title {
@@ -38,13 +46,10 @@ button.AddEvent {
     border: 2px solid #4CAF50;
     color: white;
     padding: 15px 32px;
-    width: 100%;
     text-align: center;
-    text-decoration: none;
-    display: inline-block;
     font-size: 16px;
-    margin: 0 2px 16px 2px;
-    cursor: pointer;
+    margin: 10px auto;
+    width: 80%;
     /* fade in the button */
     transition: all 0.5s ease-in-out;
     -webkit-transition: all 0.5s ease-in-out; /* Safari */
@@ -56,12 +61,10 @@ button.AddEvent:hover {
     border-radius: 5px;
     color: white;
     padding: 15px 32px;
-    width: 100%;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
+    margin: 10px auto;
+    width: 80%;
+    max-width: 70%;
     font-size: 16px;
-    margin: 0 2px 16px 2px;
     cursor: pointer;
     transition: all 0.5s ease-in-out;
     -webkit-transition: all 0.5s ease-in-out; /* Safari */

@@ -6,7 +6,6 @@ import {Socket} from "socket.io-client";
 import {Sounds} from "../schedule";
 
 function getNextEvent(events: Event[] | undefined): Event | undefined {
-    console.log("getNextEvent", events);
     if (!events) {
         return undefined;
     }
@@ -18,11 +17,10 @@ function getNextEvent(events: Event[] | undefined): Event | undefined {
             }
         }
     }
-    console.log(nextEvent);
     return nextEvent;
 }
 
-function NextEvent({events, socket, sounds}: {events: Event[] | undefined, socket: Socket, sounds: Sounds}) {
+function NextEvent({events}: {events: Event[] | undefined}) {
     let nextEvent: Event | undefined = getNextEvent(events);
     if (!nextEvent) return(
         <div className="Card-Full">
@@ -33,10 +31,9 @@ function NextEvent({events, socket, sounds}: {events: Event[] | undefined, socke
             </div>
         </div>
     );
-    console.log(events)
     return (
         <>
-            <CardEvent event={nextEvent} socket={socket} sounds={sounds}/>
+            <CardEvent event={nextEvent} />
         </>
     )
 }

@@ -27,14 +27,15 @@ export class SQLEvents {
             filename: 'schedule.db',
             driver: sqlite3.Database
         });
-        let name = event.title
-        //if (event.old) name = event.old;
-        //else event.old = event.title;
+        console.log(event);
+        if (event.old && event.old !== "") {
+            await db.run('UPDATE schedule SET Name = ?, Description = ?, Start_Time = ?, End_Time = ?, Location = ?, How = ? WHERE Name = ?',
+                event.title, event.description, event.start_time, event.end_time, event.where, event.how, event.old);
+        } else {
+            await db.run('INSERT OR REPLACE INTO schedule (Name, Description, Start_Time, End_Time, Location, How) VALUES (?, ?, ?, ?, ?, ?)',
+                event.title, event.description, event.start_time, event.end_time, event.where, event.how);
+        }
 
-        if (await this.hasEvent(name)) await db.run('UPDATE schedule SET name = ?, description = ?, start_time = ?, end_time = ?, location = ?, how = ? WHERE name = ?',
-            event.title, event.description, event.start_time, event.end_time, event.where, event.how);
-        else await db.run('INSERT INTO schedule VALUES (?,?,?,?,?,?)',
-            event.title, event.description, event.start_time, event.end_time, event.where, event.how);
     }
 
     static async getAllEvents(): Promise<Array<Event>> {
